@@ -19,15 +19,15 @@ function wait_for_stop {
 function update-configuration {
     case "$1" in
       1.9)
-        dirname $(scl enable ruby193 "which ruby") >$OPENSHIFT_RUBY_DIR/env/OPENSHIFT_RUBY_PATH_ELEMENT
-        path_append $LD_LIBRARY_PATH $(scl enable ruby193 "printenv LD_LIBRARY_PATH") >$OPENSHIFT_RUBY_DIR/env/LD_LIBRARY_PATH
-        path_append $MANPATH $(scl enable ruby193 "printenv MANPATH") >$OPENSHIFT_RUBY_DIR/env/MANPATH
+        dirname $(scl enable ruby193 "which ruby") >$OPENSHIFT_RAILS_DIR/env/OPENSHIFT_RAILS_PATH_ELEMENT
+        path_append $LD_LIBRARY_PATH $(scl enable ruby193 "printenv LD_LIBRARY_PATH") >$OPENSHIFT_RAILS_DIR/env/LD_LIBRARY_PATH
+        path_append $MANPATH $(scl enable ruby193 "printenv MANPATH") >$OPENSHIFT_RAILS_DIR/env/MANPATH
         ;;
 
       1.8)
-        rm -f $OPENSHIFT_RUBY_DIR/env/OPENSHIFT_RUBY_PATH_ELEMENT \
-            $OPENSHIFT_RUBY_DIR/env/LD_LIBRARY_PATH \
-            $OPENSHIFT_RUBY_DIR/env/MANPATH
+        rm -f $OPENSHIFT_RAILS_DIR/env/OPENSHIFT_RAILS_PATH_ELEMENT \
+            $OPENSHIFT_RAILS_DIR/env/LD_LIBRARY_PATH \
+            $OPENSHIFT_RAILS_DIR/env/MANPATH
         ;;
     esac
 }

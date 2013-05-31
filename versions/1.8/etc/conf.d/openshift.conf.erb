@@ -5,18 +5,18 @@ LoadModule passenger_module modules/mod_passenger.so
    PassengerSpawnMethod conservative
 </IfModule>
 
-ServerRoot "<%= ENV['OPENSHIFT_RUBY_DIR'] %>"
+ServerRoot "<%= ENV['OPENSHIFT_RAILS_DIR'] %>"
 DocumentRoot "<%= ENV['OPENSHIFT_REPO_DIR'] %>/public"
-Listen <%= ENV['OPENSHIFT_RUBY_IP'] %>:<%= ENV['OPENSHIFT_RUBY_PORT'] %>
+Listen <%= ENV['OPENSHIFT_RAILS_IP'] %>:<%= ENV['OPENSHIFT_RAILS_PORT'] %>
 User <%= ENV['OPENSHIFT_GEAR_UUID'] %>
 Group <%= ENV['OPENSHIFT_GEAR_UUID'] %>
 
-ErrorLog "|/usr/sbin/rotatelogs <%= ENV['OPENSHIFT_RUBY_DIR'] %>/logs/error_log-%Y%m%d-%H%M%S-%Z 86400"
-CustomLog "|/usr/sbin/rotatelogs <%= ENV['OPENSHIFT_RUBY_DIR'] %>/logs/access_log-%Y%m%d-%H%M%S-%Z 86400" combined
+ErrorLog "|/usr/sbin/rotatelogs <%= ENV['OPENSHIFT_RAILS_DIR'] %>/logs/error_log-%Y%m%d-%H%M%S-%Z 86400"
+CustomLog "|/usr/sbin/rotatelogs <%= ENV['OPENSHIFT_RAILS_DIR'] %>/logs/access_log-%Y%m%d-%H%M%S-%Z 86400" combined
 
 PassengerUser <%= ENV['OPENSHIFT_GEAR_UUID'] %>
-PassengerPreStart http://<%= ENV['OPENSHIFT_RUBY_IP'] %>:<%= ENV['OPENSHIFT_RUBY_PORT'] %>/
-PassengerSpawnIPAddress <%= ENV['OPENSHIFT_RUBY_IP'] %>
+PassengerPreStart http://<%= ENV['OPENSHIFT_RAILS_IP'] %>:<%= ENV['OPENSHIFT_RAILS_PORT'] %>/
+PassengerSpawnIPAddress <%= ENV['OPENSHIFT_RAILS_IP'] %>
 PassengerUseGlobalQueue off
 <Directory <%= ENV['OPENSHIFT_REPO_DIR'] %>/public/>
     AllowOverride All

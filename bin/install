@@ -1,28 +1,28 @@
 #!/bin/bash -e
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
-source "${OPENSHIFT_RUBY_DIR}/lib/util"
+source "${OPENSHIFT_RAILS_DIR}/lib/util"
 
 case "$1" in
   -v|--version)
     version="$2"
 esac
 
-# Copy the version specific files to ruby directory
+# Copy the version specific files to rails directory
 shopt -s dotglob
 for dir in template; do
-    mkdir -p $OPENSHIFT_RUBY_DIR/$dir
-    cp -Lr $OPENSHIFT_RUBY_DIR/versions/$version/$dir/* $OPENSHIFT_RUBY_DIR/$dir 
+    mkdir -p $OPENSHIFT_RAILS_DIR/$dir
+    cp -Lr $OPENSHIFT_RAILS_DIR/versions/$version/$dir/* $OPENSHIFT_RAILS_DIR/$dir 
 done
 
-mkdir $OPENSHIFT_RUBY_DIR/tmp
+mkdir $OPENSHIFT_RAILS_DIR/tmp
 
 mkdir $OPENSHIFT_HOMEDIR/.gem
 
-echo "$version" > $OPENSHIFT_RUBY_DIR/env/OPENSHIFT_RUBY_VERSION
+echo "$version" > $OPENSHIFT_RAILS_DIR/env/OPENSHIFT_RAILS_VERSION
 update-configuration $version
 
 # Create additional directories required by RUBY and httpd
-ln -s /usr/lib64/httpd/modules $OPENSHIFT_RUBY_DIR
-ln -s /etc/httpd/conf/magic $OPENSHIFT_RUBY_DIR/etc/magic
+ln -s /usr/lib64/httpd/modules $OPENSHIFT_RAILS_DIR
+ln -s /etc/httpd/conf/magic $OPENSHIFT_RAILS_DIR/etc/magic
 

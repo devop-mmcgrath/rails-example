@@ -60,8 +60,8 @@ code or ensure they can run on RHEL x86_64.
 The `ruby` cartridge provides several environment variables to reference for ease
 of use:
 
-    OPENSHIFT_RUBY_LOGDIR          Log files go here.
-    OPENSHIFT_RUBY_VERSION         The Ruby language version. The valid values are `1.8` and `1.9`.
+    OPENSHIFT_RAILS_LOGDIR          Log files go here.
+    OPENSHIFT_RAILS_VERSION         The Ruby language version. The valid values are `1.8` and `1.9`.
 
 For more information about environment variables, consult the
 [OpenShift Application Author Guide](https://github.com/openshift/origin-server/blob/master/node/README.writing_applications.md).

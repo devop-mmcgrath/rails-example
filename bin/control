@@ -1,30 +1,30 @@
 #!/bin/bash -e
 
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
-source "${OPENSHIFT_RUBY_DIR}/lib/util"
-source "${OPENSHIFT_RUBY_DIR}/lib/ruby_context"
+source "${OPENSHIFT_RAILS_DIR}/lib/util"
+source "${OPENSHIFT_RAILS_DIR}/lib/ruby_context"
 
-HTTPD_CFG_FILE=$OPENSHIFT_RUBY_DIR/etc/conf/httpd_nolog.conf
+HTTPD_CFG_FILE=$OPENSHIFT_RAILS_DIR/etc/conf/httpd_nolog.conf
 
 function start() {
     echo "Starting Ruby cart"
     update_httpd_passenv $HTTPD_CFG_FILE
-    ruby_context "/usr/sbin/httpd -C 'Include $OPENSHIFT_RUBY_DIR/etc/conf.d/*.conf' -f $HTTPD_CFG_FILE -k start"
+    ruby_context "/usr/sbin/httpd -C 'Include $OPENSHIFT_RAILS_DIR/etc/conf.d/*.conf' -f $HTTPD_CFG_FILE -k start"
 }
 
 function stop() {
     echo "Stopping Ruby cart"
 
-    CART_CONF_DIR=${OPENSHIFT_RUBY_DIR}/etc/conf
+    CART_CONF_DIR=${OPENSHIFT_RAILS_DIR}/etc/conf
 
     # Stop the app
     # src_user_hook pre_stop_${cartridge_type}
     app_userid=`id -u`
     set +e
-    httpd_pid=`cat ${OPENSHIFT_RUBY_DIR}/run/httpd.pid 2> /dev/null`
+    httpd_pid=`cat ${OPENSHIFT_RAILS_DIR}/run/httpd.pid 2> /dev/null`
     set -e
 
-    ruby_context "/usr/sbin/httpd -C 'Include $OPENSHIFT_RUBY_DIR/etc/conf.d/*.conf' -f $HTTPD_CFG_FILE -k stop"
+    ruby_context "/usr/sbin/httpd -C 'Include $OPENSHIFT_RAILS_DIR/etc/conf.d/*.conf' -f $HTTPD_CFG_FILE -k stop"
 
     for i in {1..20}
     do
@@ -62,11 +62,11 @@ function restart() {
     echo "${1}ing Ruby cart"
     update_httpd_passenv $HTTPD_CFG_FILE
     touch $OPENSHIFT_REPO_DIR/tmp/restart.txt
-    ruby_context "/usr/sbin/httpd -C 'Include $OPENSHIFT_RUBY_DIR/etc/conf.d/*.conf' -f $HTTPD_CFG_FILE -k restart"
+    ruby_context "/usr/sbin/httpd -C 'Include $OPENSHIFT_RAILS_DIR/etc/conf.d/*.conf' -f $HTTPD_CFG_FILE -k restart"
 }
 
 function status() {
-   if output=$(curl http://$OPENSHIFT_RUBY_IP:$OPENSHIFT_RUBY_PORT/ &> /dev/null)
+   if output=$(curl http://$OPENSHIFT_RAILS_IP:$OPENSHIFT_RAILS_PORT/ &> /dev/null)
    then
       client_result "Application is running"
    else
@@ -76,15 +76,15 @@ function status() {
 
 # Clean up any log files
 function tidy() {
-  client_message "Emptying log dir: $OPENSHIFT_RUBY_LOG_DIR"
+  client_message "Emptying log dir: $OPENSHIFT_RAILS_LOG_DIR"
   shopt -s dotglob
-  rm -rf $OPENSHIFT_RUBY_LOG_DIR/*
-  rm -rf ${OPENSHIFT_RUBY_DIR}tmp/*
+  rm -rf $OPENSHIFT_RAILS_LOG_DIR/*
+  rm -rf ${OPENSHIFT_RAILS_DIR}tmp/*
 }
 
 function pre-repo-archive() {
   # set -x
-  rm -rf ${OPENSHIFT_RUBY_DIR}/tmp/.bundle ${OPENSHIFT_RUBY_DIR}/tmp/vendor
+  rm -rf ${OPENSHIFT_RAILS_DIR}/tmp/.bundle ${OPENSHIFT_RAILS_DIR}/tmp/vendor
 
   # If the previous and current commits didn't upload .bundle and you have .bundle and vendor/bundle already deployed then store away for redeploy
   # Also adding .openshift/markers/force_clean_build at the root of the repo will trigger a clean rebundle
@@ -96,8 +96,8 @@ function pre-repo-archive() {
       && [ -d ${OPENSHIFT_REPO_DIR}vendor/bundle ]
     then
       echo 'Saving away previously bundled RubyGems'
-      mv ${OPENSHIFT_REPO_DIR}.bundle ${OPENSHIFT_RUBY_DIR}/tmp/
-      mv ${OPENSHIFT_REPO_DIR}vendor ${OPENSHIFT_RUBY_DIR}/tmp/
+      mv ${OPENSHIFT_REPO_DIR}.bundle ${OPENSHIFT_RAILS_DIR}/tmp/
+      mv ${OPENSHIFT_REPO_DIR}vendor ${OPENSHIFT_RAILS_DIR}/tmp/
     fi
   popd 1>/dev/null
 }
@@ -109,10 +109,10 @@ function pre-build() {
 
 function build() {
     echo "Running build on Ruby cart"
-    update-configuration $OPENSHIFT_RUBY_VERSION
+    update-configuration $OPENSHIFT_RAILS_VERSION
 
     USED_BUNDLER=false
-    if [ -d $OPENSHIFT_RUBY_DIR/tmp/.bundle ]
+    if [ -d $OPENSHIFT_RAILS_DIR/tmp/.bundle ]
     then
       USED_BUNDLER=true
     fi
@@ -120,14 +120,14 @@ function build() {
     if $USED_BUNDLER
     then
       echo 'Restoring previously bundled RubyGems (note: you can commit .openshift/markers/force_clean_build at the root of your repo to force a clean bundle)'
-      mv $OPENSHIFT_RUBY_DIR/tmp/.bundle ${OPENSHIFT_REPO_DIR}
+      mv $OPENSHIFT_RAILS_DIR/tmp/.bundle ${OPENSHIFT_REPO_DIR}
       if [ -d ${OPENSHIFT_REPO_DIR}vendor ]
       then
-        mv $OPENSHIFT_RUBY_DIR/tmp/vendor/bundle ${OPENSHIFT_REPO_DIR}vendor/
+        mv $OPENSHIFT_RAILS_DIR/tmp/vendor/bundle ${OPENSHIFT_REPO_DIR}vendor/
       else
-        mv $OPENSHIFT_RUBY_DIR/tmp/vendor ${OPENSHIFT_REPO_DIR}
+        mv $OPENSHIFT_RAILS_DIR/tmp/vendor ${OPENSHIFT_REPO_DIR}
       fi
-      rm -rf $OPENSHIFT_RUBY_DIR/tmp/.bundle $OPENSHIFT_RUBY_DIR/tmp/vendor
+      rm -rf $OPENSHIFT_RAILS_DIR/tmp/.bundle $OPENSHIFT_RAILS_DIR/tmp/vendor
     fi
 
     # If .bundle isn't currently committed and a Gemfile is then bundle install
@@ -184,7 +184,7 @@ function threaddump() {
       client_result "Success"
       client_result ""
       # note bz 923405/921537 for why log file name is not more specific
-      client_result "The thread dump file will be available via: rhc tail ${OPENSHIFT_APP_NAME} -f ${OPENSHIFT_RUBY_LOG_DIR}/error_log-$DATE-* -o '-n 250'"
+      client_result "The thread dump file will be available via: rhc tail ${OPENSHIFT_APP_NAME} -f ${OPENSHIFT_RAILS_LOG_DIR}/error_log-$DATE-* -o '-n 250'"
   else
       client_result " $result"
   fi
@@ -222,6 +222,6 @@ case "$1" in
   deploy)            deploy ;;
   post-deploy)       post-deploy ;;
   threaddump)        threaddump ;;
-  update-configuration)   update-configuration $OPENSHIFT_RUBY_VERSION;;
+  update-configuration)   update-configuration $OPENSHIFT_RAILS_VERSION;;
   *)                 exit 0
 esac
