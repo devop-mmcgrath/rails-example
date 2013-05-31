@@ -1,6 +1,7 @@
 Name: rails
 Cartridge-Short-Name: RAILS
 Display-Name: rails 3.2
+Source-Url: https://github.com/mmcgrath-openshift/rails-example.git
 Description: "Ruby is a dynamic, reflective, general-purpose object-oriented programming language. Popular development frameworks include Ruby on Rails and Sinatra."
 Version: '3.2'
 Versions: ['3.2']
