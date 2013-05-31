@@ -1,0 +1,12 @@
+---
+locked_files:
+- bin/
+- bin/*
+- metadata/
+- metadata/*
+- env/
+- env/OPENSHIFT_RAILS_DIR
+- env/OPENSHIFT_RAILS_LOG_DIR
+- etc/
+processed_templates:
+- '**/*.erb'
