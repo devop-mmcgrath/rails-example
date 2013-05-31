@@ -12,7 +12,7 @@ esac
 shopt -s dotglob
 for dir in template; do
     mkdir -p $OPENSHIFT_RAILS_DIR/$dir
-    cp -Lr $OPENSHIFT_RAILS_DIR/versions/$version/$dir/* $OPENSHIFT_RAILS_DIR/$dir 
+    cp -Lr $OPENSHIFT_RAILS_DIR/versions/1.9/$dir/* $OPENSHIFT_RAILS_DIR/$dir 
 done
 
 mkdir $OPENSHIFT_RAILS_DIR/tmp
