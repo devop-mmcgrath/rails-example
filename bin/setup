@@ -1,7 +1,5 @@
 #!/bin/bash -e
 
-version='1.9'
-
 case "$1" in
   -v|--version)
     version="$2"
@@ -18,11 +16,9 @@ set -u
 shopt -s dotglob
 for dir in etc; do
     mkdir -p $OPENSHIFT_RAILS_DIR/$dir
-    cp -Lr $OPENSHIFT_RAILS_DIR/versions/$version/$dir/* $OPENSHIFT_RAILS_DIR/$dir 
+    cp -Lr $OPENSHIFT_RAILS_DIR/versions/1.9/$dir/* $OPENSHIFT_RAILS_DIR/$dir 
 done
 
-if [ $version == '1.9' ]; then
-    dirname $(scl enable ruby193 "which ruby")    > $OPENSHIFT_RAILS_DIR/env/OPENSHIFT_RAILS_PATH_ELEMENT
-    scl enable ruby193 "printenv LD_LIBRARY_PATH" > $OPENSHIFT_RAILS_DIR/env/LD_LIBRARY_PATH
-    scl enable ruby193 "printenv MANPATH"         > $OPENSHIFT_RAILS_DIR/env/MANPATH
-fi
+dirname $(scl enable ruby193 "which ruby")    > $OPENSHIFT_RAILS_DIR/env/OPENSHIFT_RAILS_PATH_ELEMENT
+scl enable ruby193 "printenv LD_LIBRARY_PATH" > $OPENSHIFT_RAILS_DIR/env/LD_LIBRARY_PATH
+scl enable ruby193 "printenv MANPATH"         > $OPENSHIFT_RAILS_DIR/env/MANPATH
